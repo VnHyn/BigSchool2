@@ -9,27 +9,31 @@ namespace BigSchool3.ViewModels
 {
     public class CourseViewModel
     {
+       public int Id { get; set; }
         [Required]
         public string Place { get; set; }
 
         [Required]
-        [FuturDate]
+        [FutureDate]
         public string Date { get; set; }
         [Required]
         [ValidTime]
         public string Time { get; set; }
         [Required]
         public byte Category { get; set; }
+        public string Heading { get; set; }
+        public string Action
+        {
+            get { return (Id != 0) ? "Update" : "Create"; }
+        }
         [Required]
         public IEnumerable<Category>Categories { get; set; }
+        public List<Course> UpcommingCourses { get; internal set; }
+        public string ShowAction { get; internal set; }
+
         public DateTime GetDateTime()
         {
             return DateTime.Parse(string.Format("{0} {1}", Date, Time));
         }
-
-    }
-
-    internal class FuturDateAttribute : Attribute
-    {
     }
 }

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BigSchool3.ViewModels;
 using System.Data.Entity;
 using BigSchool3.Controllers;
+using BigSchool3.ViewModels;
 
 namespace BigSchool3.Controllers
 {
@@ -21,7 +21,13 @@ namespace BigSchool3.Controllers
         {
             var upcommingCourses = _dbContext.Courses.Include(c => c.Lecturer).Include(c => c.Category)
                 .Where(c => c.DateTime > DateTime.Now);
-            return View(upcommingCourses);
+            var viewModel = new CoursesViewModel
+            {
+                UpcommingCourses = upcommingCourses,
+                ShowAction = User.Identity.IsAuthenticated
+
+            };
+            return View(viewModel);           
         }
 
         public ActionResult About()

@@ -19,6 +19,12 @@ namespace BigSchool3.Migrations
         {
             internal class ApplicationDbContext
             {
+                public object Attendances { get; internal set; }
+
+                internal void SaveChanges()
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
     }

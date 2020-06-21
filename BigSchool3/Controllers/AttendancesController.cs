@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNet.Identity;
-using System.Web.Http;
-using static BigSchool3.Migrations.BigSchool3.Models;
-using BigSchool3.DTOs;
-using System.Data.Entity;
-using System.Web.Configuration;
+﻿using BigSchool3.DTOs;
 using BigSchool3.Models;
-using ApplicationDbContext = BigSchool3.Migrations.BigSchool3.Models.ApplicationDbContext;
+using Microsoft.AspNet.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 
 namespace BigSchool3.Controllers
 {
@@ -13,29 +14,43 @@ namespace BigSchool3.Controllers
     public class AttendancesController : ApiController
     {
         private ApplicationDbContext _dbContext;
-
         public AttendancesController()
         {
-            DbContext = new ApplicationDbContext();
+            _dbContext = new ApplicationDbContext();
         }
 
-        internal Migrations.BigSchool3.Models.ApplicationDbContext DbContext { get => _dbContext; set => _dbContext = value; }
+
 
         [HttpPost]
         public IHttpActionResult Attend(AttendanceDto attendanceDto)
         {
             var userId = User.Identity.GetUserId();
-            if (_dbContext.Attendances.Any(a = a.AttendeeId == userId && a.CourseId == attendanceDto.CourseId))
-                return BadRequest("The Attendance already exists");
+            if (_dbContext.Attendances.Any(a => a.AttendeeId == userId && a.CourseId == attendanceDto.CourseId))
+                return BadRequest("The Attendance already exist!");
+
             var attendance = new Attendance
             {
                 CourseId = attendanceDto.CourseId,
                 AttendeeId = userId
+
             };
             _dbContext.Attendances.Add(attendance);
             _dbContext.SaveChanges();
-
             return Ok();
+
+        }
+        [HttpDelete]
+        public IHttpActionResult DeleteAttendance(int id)
+        {
+            var userId = User.Identity.GetUserId();
+            var attendance = _dbContext.Attendances.SingleOrDefault(a => a.AttendeeId == userId && a.CourseId == id);
+            if (attendance == null)
+            {
+                return NotFound();
+            }
+            _dbContext.Attendances.Remove(attendance);
+            _dbContext.SaveChanges();
+            return Ok(id);
         }
     }
 }
