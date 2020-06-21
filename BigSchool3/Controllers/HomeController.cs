@@ -25,7 +25,6 @@ namespace BigSchool3.Controllers
             {
                 UpcommingCourses = upcommingCourses,
                 ShowAction = User.Identity.IsAuthenticated
-
             };
             return View(viewModel);           
         }
